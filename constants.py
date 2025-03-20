@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # Initialize variables
 START_DATE = datetime(2025, 3, 20)  # First day of the audit

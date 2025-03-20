@@ -6,41 +6,50 @@ from datetime import datetime, timedelta
 from typing import List, Any
 from constants import START_DATE, END_DATE, INCREMENT_PERCENT, INITIAL_VALUE, DATA_FILE_PATH
 
+
 # Set up logging
 def setup_logging() -> None:
     """Configure logging to both file and console"""
     os.makedirs("logs", exist_ok=True)
     log_file = "logs/log.log"
-    
+
     # Create logger
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
-    
+
     # Create formatters
-    file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-    console_formatter = logging.Formatter('%(message)s')
-    
+    file_formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    console_formatter = logging.Formatter("%(message)s")
+
     # File handler
     file_handler = logging.FileHandler(log_file)
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(file_formatter)
-    
+
     # Console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(console_formatter)
-    
+
     # Add handlers to logger
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
     return logger
 
+
 # Initialize logger
 logger = setup_logging()
 
 # Calculate total weekdays between START_DATE and END_DATE
-TOTAL_DAYS = sum(1 for day in range((END_DATE - START_DATE).days + 1) if (START_DATE + timedelta(days=day)).weekday() < 5)
+TOTAL_DAYS = sum(
+    1
+    for day in range((END_DATE - START_DATE).days + 1)
+    if (START_DATE + timedelta(days=day)).weekday() < 5
+)
 TODAY = datetime.now().strftime("%Y-%m-%d")
+
 
 def _get_current_time() -> str:
     """get current time"""
@@ -60,7 +69,9 @@ def generate_audit_report() -> None:
         os.rename(DATA_FILE_PATH, f"{DATA_FILE_PATH}_{timestamp}.csv")
         logger.info(f"Backup of old file created: {DATA_FILE_PATH}_{timestamp}.csv")
 
-    data: List[List[Any]] = [[TODAY, 0, TOTAL_DAYS, INCREMENT_PERCENT, '-', f"{INITIAL_VALUE:_.2f}", '-', '-', '-']]
+    data: List[List[Any]] = [
+        [TODAY, 0, TOTAL_DAYS, INCREMENT_PERCENT, "-", f"{INITIAL_VALUE:_.2f}", "-", "-", "-"]
+    ]
     total = INITIAL_VALUE
     actual_day_count = 0  # Counter for actual days added to the report
 
@@ -70,18 +81,20 @@ def generate_audit_report() -> None:
             actual_day_count += 1  # Increment the actual day count
             increment = total * INCREMENT_PERCENT
             total += increment
-            data.append([
-                date.strftime("%Y-%m-%d"),
-                actual_day_count,  # Use the actual day count
-                f"{TOTAL_DAYS - actual_day_count}",
-                f"{INCREMENT_PERCENT}",
-                f"{increment:_.2f}",
-                f"{total:_.2f}",
-                "-",
-                "-",
-                "-",
-            ])
-    
+            data.append(
+                [
+                    date.strftime("%Y-%m-%d"),
+                    actual_day_count,  # Use the actual day count
+                    f"{TOTAL_DAYS - actual_day_count}",
+                    f"{INCREMENT_PERCENT}",
+                    f"{increment:_.2f}",
+                    f"{total:_.2f}",
+                    "-",
+                    "-",
+                    "-",
+                ]
+            )
+
     df = pd.DataFrame(
         data,
         columns=[
@@ -121,7 +134,10 @@ def _input_balance() -> float:
         except ValueError:
             remaining_attempts = max_attempts - attempt - 1
             if remaining_attempts > 0:
-                logger.warning(f"Invalid input. Please enter a valid amount. {remaining_attempts} attempts remaining.")
+                logger.warning(
+                    f"Invalid input. "
+                    f"Please enter a valid amount. {remaining_attempts} attempts remaining."
+                )
             else:
                 logger.error("Exiting program, invalid input 3 times")
                 exit()
@@ -165,4 +181,5 @@ def main():
 
 
 if __name__ == "__main__":
+    """trigger main flow"""
     main()
