@@ -142,7 +142,6 @@ def _input_balance() -> float:
                 logger.error("Exiting program, invalid input 3 times")
                 exit()
 
-
 def update_today_balance() -> None:
     input_balance = _input_balance()
     df = pd.read_csv("data/audit_data.csv")
